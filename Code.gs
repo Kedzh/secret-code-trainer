@@ -43,10 +43,18 @@ function doPost(e) {
         'Заданий выполнено (из 3)',
         'Ошибок',
         'Время (сек)',
-        'Секретный код'
+        'Секретный код',
+        'Правильность (%)'
       ]);
-      sheet.getRange(1, 1, 1, 10).setFontWeight('bold').setBackground('#eaf4ff');
+      sheet.getRange(1, 1, 1, 11).setFontWeight('bold').setBackground('#eaf4ff');
       sheet.setFrozenRows(1);
+    } else {
+      // Если таблица уже есть, но нового столбца нет — добавим заголовок в 11-й колонке
+      var lastCol = sheet.getLastColumn();
+      if (lastCol < 11) {
+        sheet.getRange(1, 11).setValue('Правильность (%)')
+          .setFontWeight('bold').setBackground('#eaf4ff');
+      }
     }
 
     sheet.appendRow([
@@ -59,7 +67,8 @@ function doPost(e) {
       data.score !== undefined ? data.score : '',
       data.errors !== undefined ? data.errors : '',
       data.timeSec !== undefined ? data.timeSec : '',
-      data.code || ''
+      data.code || '',
+      data.accuracy !== undefined ? data.accuracy : ''
     ]);
 
     return ContentService

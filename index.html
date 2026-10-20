@@ -109,6 +109,53 @@
   .btn.send.sending{opacity:.6;pointer-events:none;}
   .btn.send.done{background:#d9f7e3;border-color:var(--green);}
 
+  /* ---------- ПРОЦЕНТ ПРАВИЛЬНОСТИ ---------- */
+  .acc-panel{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:#fff;
+    border:4px solid var(--blue);
+    border-radius:18px;
+    padding:10px 16px;
+    margin-top:14px;
+    box-shadow:0 6px 0 rgba(31,111,208,.12);
+    position:sticky;
+    top:8px;
+    z-index:30;
+  }
+  .acc-label{font-weight:800;font-size:16px;white-space:nowrap;}
+  .acc-bar{
+    flex:1;
+    height:22px;
+    background:#eef4fb;
+    border:2px solid #cfe1f5;
+    border-radius:999px;
+    overflow:hidden;
+    min-width:60px;
+  }
+  .acc-fill{
+    height:100%;
+    width:100%;
+    background:linear-gradient(90deg,#2fa84f,#5cd47c);
+    border-radius:999px;
+    transition:width .5s ease, background .4s ease;
+  }
+  .acc-fill.mid{background:linear-gradient(90deg,#f39c12,#f7c948);}
+  .acc-fill.low{background:linear-gradient(90deg,#e74c3c,#ff8a7a);}
+  .acc-value{
+    font-weight:800;
+    font-size:22px;
+    min-width:62px;
+    text-align:right;
+    color:#1c7a3a;
+    transition:color .4s;
+  }
+  .acc-value.mid{color:#c07800;}
+  .acc-value.low{color:#b3271a;}
+  .acc-panel.penalize{animation:shake .4s;}
+  .acc-panel.flash{border-color:var(--red);}
+
   /* ---------- ЗАДАНИЯ ---------- */
   .task{
     background:#fff;
@@ -339,6 +386,17 @@
     padding:10px;
     margin:14px 0;
   }
+  .modal .acc-final{
+    font-size:17px;
+    font-weight:800;
+    padding:8px 12px;
+    border-radius:12px;
+    background:#eaf9ef;
+    color:#1c7a3a;
+    margin:0 0 12px;
+  }
+  .modal .acc-final.mid{background:#fff6e6;color:#c07800;}
+  .modal .acc-final.low{background:#ffe1dd;color:#b3271a;}
   .modal p{margin:6px 0 16px;font-size:16px;color:#33628f;}
   .confetti{
     position:fixed;top:-24px;width:12px;height:18px;
@@ -375,6 +433,12 @@
     <button class="btn green" id="checkBtn">✅ Проверить</button>
     <button class="btn" id="resetBtn">🔄 Начать заново</button>
     <button class="btn send" id="sendBtn">📩 Отправить результат</button>
+  </div>
+
+  <div class="acc-panel" id="accPanel">
+    <div class="acc-label">🎯 Правильность</div>
+    <div class="acc-bar"><div class="acc-fill" id="accFill"></div></div>
+    <div class="acc-value" id="accValue">100%</div>
   </div>
 
   <!-- ЗАДАНИЕ 1 -->
@@ -453,6 +517,7 @@
     <div class="big">🔓🎉</div>
     <h3>СЕКРЕТНЫЙ КОД РАСКРЫТ!</h3>
     <div class="code">SECRET</div>
+    <div class="acc-final" id="accFinal">🎯 Итоговая правильность: 100%</div>
     <p id="modalText">Молодец! Ты выполнил все три задания и открыл сейф. 🌟</p>
     <button class="btn green" id="againBtn">Играть ещё раз</button>
     <button class="btn" id="closeBtn" style="margin-left:8px;">Закрыть</button>
@@ -477,6 +542,35 @@
   var audioCtx = null;
   var startTime = Date.now();
   var errors = 0;
+  var PENALTY = 10;          // за каждый неверный ответ −10%
+  var accValue = document.getElementById('accValue');
+  var accFill  = document.getElementById('accFill');
+  var accPanel = document.getElementById('accPanel');
+  var accValue, accFill, accPanel;
+
+  /* ---------- ПРОЦЕНТ ПРАВИЛЬНОСТИ ---------- */
+  function accuracy(){ return Math.max(0, 100 - errors * PENALTY); }
+  function renderAccuracy(penalize){
+    if(!accValue) return;
+    var p = accuracy();
+    accValue.textContent = p + '%';
+    accFill.style.width = p + '%';
+    var cls = p >= 70 ? '' : p >= 40 ? ' mid' : ' low';
+    accFill.className = 'acc-fill' + cls;
+    accValue.className = 'acc-value' + cls;
+    if(penalize){
+      accPanel.classList.remove('penalize','flash');
+      void accPanel.offsetWidth;
+      accPanel.classList.add('penalize','flash');
+      setTimeout(function(){ accPanel.classList.remove('flash'); }, 700);
+      toast('−' + PENALTY + '% Правильность: ' + p + '%');
+    }
+  }
+  // вызывается при каждом неверном ответе
+  function registerError(){
+    errors++;
+    renderAccuracy(true);
+  }
 
   /* ---------- ЗВУК ---------- */
   function ac(){
@@ -613,7 +707,7 @@
         void btn.offsetWidth;
         btn.classList.add('wrong');
         play('bad');
-        errors++;
+        registerError();
         setTimeout(function(){ btn.classList.remove('wrong'); }, 500);
         if(pairs.length < 5) uncomplete('t1');
       }
@@ -634,7 +728,8 @@
         if(!inp.classList.contains('ok')){ play('ok'); speak(v); }
         inp.classList.add('ok');
       }else{
-        if(!inp.classList.contains('bad')) errors++;
+        // каждая неверно введённая буква — это новый неверный ответ: −10%
+        registerError();
         inp.classList.remove('ok');
         inp.classList.add('bad');
       }
@@ -670,7 +765,7 @@
           void btn.offsetWidth;
           btn.classList.add('wrong');
           play('bad');
-          if(!btn.classList.contains('right')) errors++;
+          if(!btn.classList.contains('right')) registerError();
           row.classList.remove('solved');
           checkTask3();
         }
@@ -700,6 +795,7 @@
       score: done,
       maxScore: 3,
       errors: errors,
+      accuracy: accuracy(),
       timeSec: Math.round((Date.now() - startTime) / 1000),
       code: done === 3 ? 'SECRET' : 'не открыт',
       date: new Date().toLocaleString('ru-RU')
@@ -743,9 +839,17 @@
     confetti();
     setTimeout(function(){
       var name = document.getElementById('studentName').value.trim();
+      var p = accuracy();
+      var rank = p === 100 ? '🏆 Идеально! Ни одной ошибки!' :
+                 p >= 80  ? '🌟 Отлично!' :
+                 p >= 60  ? '👍 Хорошо, есть над чем потренироваться.' :
+                            '💪 Неплохо для начала — попробуй ещё раз!';
+      var final = document.getElementById('accFinal');
+      final.textContent = '🎯 Итоговая правильность: ' + p + '%';
+      final.className = 'acc-final' + (p >= 70 ? '' : p >= 40 ? ' mid' : ' low');
       document.getElementById('modalText').textContent =
         (name ? name + ', молодец! ' : 'Молодец! ') +
-        'Ты выполнил все три задания и открыл сейф. 🌟';
+        'Ты выполнил все три задания и открыл сейф. ' + rank;
       overlay.classList.add('show');
       if(GOOGLE_SHEET_URL) sendResult(true);
     }, 700);
@@ -811,6 +915,7 @@
     toast('Начинаем заново! 🚀');
     errors = 0;
     startTime = Date.now();
+    renderAccuracy(false);
     sendBtn.classList.remove('sending','done');
     sendBtn.textContent = '📩 Отправить результат';
     window.scrollTo({top:0, behavior:'smooth'});
