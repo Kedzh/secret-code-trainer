@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Английский • 2 класс — Игровая контрольная «Секретный код»</title>
+<style>
+  :root{
+    --blue:#1f6fd0;
+    --blue-soft:#eaf4ff;
+    --green:#2fa84f;
+    --green-soft:#eaf9ef;
+    --orange:#f39c12;
+    --orange-soft:#fff6e6;
+    --red:#e74c3c;
+    --ink:#123a72;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:"Comic Sans MS","Segoe UI",Tahoma,sans-serif;
+    background:linear-gradient(180deg,#e9f5ff 0%,#dff0ff 50%,#eefaff 100%);
+    color:var(--ink);
+    min-height:100vh;
+    padding:18px 12px 60px;
+  }
+  .wrap{max-width:840px;margin:0 auto;}
+
+  /* ---------- ШАПКА ---------- */
+  header{
+    background:#fff;
+    border:4px solid var(--blue);
+    border-radius:20px;
+    padding:16px 18px;
+    box-shadow:0 6px 0 rgba(31,111,208,.15);
+    text-align:center;
+    position:relative;
+  }
+  header h1{
+    margin:0;
+    font-size:clamp(20px,4vw,32px);
+    letter-spacing:.5px;
+  }
+  header h1 .emoji{font-size:.9em;}
+  header h2{
+    margin:6px 0 0;
+    font-size:clamp(15px,2.6vw,21px);
+    font-weight:700;
+    color:#2b5fb0;
+  }
+  .name-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    justify-content:space-between;
+    margin-top:14px;
+    font-weight:700;
+    font-size:16px;
+    text-align:left;
+  }
+  .name-row label{display:flex;align-items:center;gap:8px;flex:1 1 240px;}
+  .name-row input{
+    flex:1;
+    border:none;
+    border-bottom:3px dotted var(--blue);
+    background:transparent;
+    font:inherit;
+    color:var(--ink);
+    padding:4px 6px;
+    outline:none;
+    min-width:120px;
+  }
+  .stars{
+    display:flex;
+    gap:6px;
+    justify-content:center;
+    font-size:26px;
+    margin-bottom:4px;
+  }
+  .stars .star{filter:grayscale(1);opacity:.3;transition:.35s;transform:scale(.9);}
+  .stars .star.on{filter:none;opacity:1;transform:scale(1.15);}
+
+  /* ---------- КНОПКИ ---------- */
+  .toolbar{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin:16px 0 6px;
+  }
+  .btn{
+    font:inherit;
+    font-weight:700;
+    font-size:16px;
+    border:none;
+    border-radius:14px;
+    padding:10px 18px;
+    cursor:pointer;
+    background:#fff;
+    color:var(--ink);
+    border:3px solid var(--blue);
+    box-shadow:0 4px 0 rgba(31,111,208,.3);
+    transition:.12s;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(31,111,208,.3);}
+  .btn.green{background:var(--green);border-color:#237f3c;color:#fff;box-shadow:0 4px 0 rgba(35,127,60,.35);}
+  .btn.send{background:#ffe9b8;border-color:var(--orange);box-shadow:0 4px 0 rgba(243,156,18,.35);}
+  .btn.send.sending{opacity:.6;pointer-events:none;}
+  .btn.send.done{background:#d9f7e3;border-color:var(--green);}
+
+  /* ---------- ЗАДАНИЯ ---------- */
+  .task{
+    background:#fff;
+    border:4px solid var(--blue);
+    border-radius:18px;
+    padding:16px 18px 20px;
+    margin-top:18px;
+    box-shadow:0 6px 0 rgba(31,111,208,.12);
+    position:relative;
+  }
+  .task.t2{border-color:var(--green);box-shadow:0 6px 0 rgba(47,168,79,.15);}
+  .task.t3{border-color:var(--orange);box-shadow:0 6px 0 rgba(243,156,18,.18);}
+  .task h3{
+    margin:0 0 4px;
+    font-size:clamp(17px,2.6vw,22px);
+  }
+  .task p.instr{margin:0 0 14px;font-size:15px;color:#33628f;font-weight:600;}
+  .task .badge{
+    position:absolute;
+    top:-16px;
+    right:14px;
+    background:#fff;
+    border:3px solid var(--green);
+    color:var(--green);
+    border-radius:999px;
+    padding:4px 12px;
+    font-weight:700;
+    font-size:14px;
+    opacity:0;
+    transform:translateY(-6px);
+    transition:.3s;
+  }
+  .task.done .badge{opacity:1;transform:none;}
+
+  /* ---------- ЗАДАНИЕ 1 ---------- */
+  .match-area{
+    position:relative;
+    display:flex;
+    justify-content:space-between;
+    gap:30px;
+    max-width:520px;
+    margin:0 auto;
+    padding:6px 4px;
+  }
+  .match-area svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+  .col{display:flex;flex-direction:column;gap:12px;z-index:1;}
+  .letter{
+    font:inherit;
+    font-weight:800;
+    font-size:28px;
+    width:62px;
+    height:54px;
+    border:3px solid var(--blue);
+    border-radius:14px;
+    background:var(--blue-soft);
+    color:var(--ink);
+    cursor:pointer;
+    transition:.15s;
+    box-shadow:0 3px 0 rgba(31,111,208,.25);
+  }
+  .letter:hover{transform:translateY(-2px);background:#dbeeff;}
+  .letter.selected{background:var(--blue);color:#fff;transform:scale(1.06);}
+  .letter.right{
+    background:#d9f7e3;border-color:var(--green);color:#1c7a3a;
+    cursor:default;box-shadow:0 3px 0 rgba(47,168,79,.3);
+  }
+  .letter.wrong{background:#ffe1dd;border-color:var(--red);color:#b3271a;animation:shake .35s;}
+  @keyframes shake{
+    0%,100%{transform:translateX(0);}
+    25%{transform:translateX(-7px);}
+    50%{transform:translateX(7px);}
+    75%{transform:translateX(-4px);}
+  }
+  .hint-1{text-align:center;font-size:14px;color:#4a7ab5;margin-top:12px;}
+
+  /* ---------- ЗАДАНИЕ 2 ---------- */
+  .rows{display:flex;flex-direction:column;gap:10px;}
+  .row{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:14px;
+    background:var(--green-soft);
+    border:2px solid #bfe7cd;
+    border-radius:14px;
+    padding:9px 12px;
+    font-size:clamp(20px,3.4vw,26px);
+    font-weight:800;
+    color:#14512b;
+    flex-wrap:wrap;
+  }
+  .slot{
+    width:52px;
+    height:50px;
+    text-align:center;
+    font:inherit;
+    font-size:26px;
+    font-weight:800;
+    text-transform:uppercase;
+    color:#14512b;
+    border:3px dashed var(--green);
+    border-radius:12px;
+    background:#fff;
+    outline:none;
+    transition:.15s;
+  }
+  .slot:focus{border-style:solid;box-shadow:0 0 0 4px rgba(47,168,79,.2);}
+  .slot.ok{border-style:solid;border-color:var(--green);background:#d9f7e3;animation:pop .3s;}
+  .slot.bad{border-color:var(--red);background:#ffe1dd;color:#b3271a;animation:shake .35s;}
+  @keyframes pop{0%{transform:scale(.7);}70%{transform:scale(1.12);}100%{transform:scale(1);}}
+
+  /* ---------- ЗАДАНИЕ 3 ---------- */
+  .pic-rows{display:flex;flex-direction:column;gap:10px;}
+  .pic-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:var(--orange-soft);
+    border:2px solid #fbd9a0;
+    border-radius:14px;
+    padding:8px 12px;
+    flex-wrap:wrap;
+  }
+  .pic{font-size:34px;line-height:1;min-width:44px;text-align:center;}
+  .ru{
+    flex:1;
+    font-weight:800;
+    font-size:clamp(15px,2.4vw,19px);
+    color:#8a5300;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+    min-width:130px;
+  }
+  .opts{display:flex;gap:10px;}
+  .opt{
+    font:inherit;
+    font-weight:800;
+    font-size:24px;
+    width:64px;
+    height:50px;
+    border:3px solid var(--orange);
+    border-radius:12px;
+    background:#fff;
+    color:#8a5300;
+    cursor:pointer;
+    box-shadow:0 3px 0 rgba(243,156,18,.35);
+    transition:.13s;
+  }
+  .opt:hover{transform:translateY(-2px);background:#fff3df;}
+  .opt.right{background:#d9f7e3;border-color:var(--green);color:#1c7a3a;cursor:default;}
+  .opt.wrong{background:#ffe1dd;border-color:var(--red);color:#b3271a;animation:shake .35s;}
+  .pic-row.solved{background:#effaf2;border-color:#bfe7cd;}
+  .pic-row.solved .ru{color:#1c7a3a;}
+
+  /* ---------- КОД ---------- */
+  .code-panel{
+    margin-top:22px;
+    background:#fff;
+    border:4px dashed var(--blue);
+    border-radius:18px;
+    padding:14px 16px;
+    text-align:center;
+  }
+  .code-panel .title{font-weight:800;font-size:17px;letter-spacing:1px;}
+  .code-slots{display:flex;gap:10px;justify-content:center;margin-top:10px;flex-wrap:wrap;}
+  .code-slot{
+    width:52px;height:58px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:28px;font-weight:800;
+    background:var(--blue-soft);
+    border:3px solid var(--blue);
+    border-radius:12px;
+    color:transparent;
+    transition:.3s;
+  }
+  .code-slot.filled{
+    color:var(--ink);
+    background:#fff6bf;
+    border-color:var(--orange);
+    animation:pop .4s;
+  }
+
+  /* ---------- ТОСТ / МОДАЛКА ---------- */
+  .toast{
+    position:fixed;
+    left:50%;
+    bottom:26px;
+    transform:translate(-50%,20px);
+    background:#123a72;
+    color:#fff;
+    font-weight:700;
+    padding:12px 22px;
+    border-radius:999px;
+    opacity:0;
+    pointer-events:none;
+    transition:.3s;
+    z-index:60;
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0);}
+  .overlay{
+    position:fixed;inset:0;
+    background:rgba(10,40,80,.55);
+    display:none;
+    align-items:center;justify-content:center;
+    z-index:80;
+    padding:16px;
+  }
+  .overlay.show{display:flex;}
+  .modal{
+    background:#fff;
+    border:5px solid var(--blue);
+    border-radius:24px;
+    padding:26px 24px;
+    max-width:460px;
+    width:100%;
+    text-align:center;
+    animation:pop .4s;
+  }
+  .modal .big{font-size:56px;}
+  .modal h3{margin:8px 0 4px;font-size:24px;}
+  .modal .code{
+    font-size:34px;
+    font-weight:800;
+    letter-spacing:8px;
+    background:#fff6bf;
+    border:3px solid var(--orange);
+    border-radius:14px;
+    padding:10px;
+    margin:14px 0;
+  }
+  .modal p{margin:6px 0 16px;font-size:16px;color:#33628f;}
+  .confetti{
+    position:fixed;top:-24px;width:12px;height:18px;
+    z-index:90;pointer-events:none;border-radius:3px;
+    animation:fall linear forwards;
+  }
+  @keyframes fall{to{transform:translateY(110vh) rotate(760deg);opacity:0;}}
+  footer{text-align:center;margin-top:18px;font-size:13px;color:#5b83b5;}
+  @media (max-width:520px){
+    .letter{width:54px;height:48px;font-size:24px;}
+    .slot{width:46px;height:46px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="stars">
+      <span class="star" id="star1">⭐</span>
+      <span class="star" id="star2">⭐</span>
+      <span class="star" id="star3">⭐</span>
+    </div>
+    <h1><span class="emoji">🌟</span> АНГЛИЙСКИЙ ЯЗЫК • 2 КЛАСС <span class="emoji">🔒</span></h1>
+    <h2>ИГРОВАЯ КОНТРОЛЬНАЯ “СЕКРЕТНЫЙ КОД”</h2>
+    <div class="name-row">
+      <label>Имя: <input type="text" id="studentName" placeholder=""></label>
+      <label>Класс: <input type="text" id="studentClass" style="max-width:120px" placeholder=""></label>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <button class="btn" id="soundBtn">🔊 Звук: вкл</button>
+    <button class="btn green" id="checkBtn">✅ Проверить</button>
+    <button class="btn" id="resetBtn">🔄 Начать заново</button>
+    <button class="btn send" id="sendBtn">📩 Отправить результат</button>
+  </div>
+
+  <!-- ЗАДАНИЕ 1 -->
+  <section class="task t1" id="task1">
+    <div class="badge">выполнено ✔</div>
+    <h3>Задание 1. «Найди пару» 🔍</h3>
+    <p class="instr">Соедени заглавную букву со строчной. Нажми на букву слева, потом на её пару справа.</p>
+    <div class="match-area" id="matchArea">
+      <svg id="lines"></svg>
+      <div class="col" id="colLeft">
+        <button class="letter" data-up="A">A</button>
+        <button class="letter" data-up="B">B</button>
+        <button class="letter" data-up="C">C</button>
+        <button class="letter" data-up="D">D</button>
+        <button class="letter" data-up="E">E</button>
+      </div>
+      <div class="col" id="colRight">
+        <button class="letter" data-low="d">d</button>
+        <button class="letter" data-low="a">a</button>
+        <button class="letter" data-low="e">e</button>
+        <button class="letter" data-low="c">c</button>
+        <button class="letter" data-low="b">b</button>
+      </div>
+    </div>
+    <div class="hint-1">Все 5 пар найдено? Задание засчитано!</div>
+  </section>
+
+  <!-- ЗАДАНИЕ 2 -->
+  <section class="task t2" id="task2">
+    <div class="badge">выполнено ✔</div>
+    <h3>Задание 2. «Почини алфавитный поезд» 🚂</h3>
+    <p class="instr">Впиши пропущенную букву (заглавную).</p>
+    <div class="rows">
+      <div class="row"><span>A</span><span>B</span><input class="slot" data-answer="C" maxlength="1" inputmode="text" aria-label="пропущенная буква"><span>D</span></div>
+      <div class="row"><span>E</span><input class="slot" data-answer="F" maxlength="1" aria-label="пропущенная буква"><span>G</span></div>
+      <div class="row"><span>H</span><span>I</span><input class="slot" data-answer="J" maxlength="1" aria-label="пропущенная буква"></div>
+      <div class="row"><span>J</span><input class="slot" data-answer="K" maxlength="1" aria-label="пропущенная буква"><span>L</span></div>
+      <div class="row"><span>M</span><span>N</span><input class="slot" data-answer="O" maxlength="1" aria-label="пропущенная буква"></div>
+    </div>
+  </section>
+
+  <!-- ЗАДАНИЕ 3 -->
+  <section class="task t3" id="task3">
+    <div class="badge">выполнено ✔</div>
+    <h3>Задание 3. «Буквенный детектив» 🕵️</h3>
+    <p class="instr">Посмотри на <b>картинку</b> и обведи первую <b>букву</b> английского слова. Делай это задание, если вы уже учили эти слова.</p>
+    <div class="pic-rows">
+      <div class="pic-row" data-answer="C"><span class="pic">🐱</span><span class="ru">кот</span><span class="opts"><button class="opt" data-v="C">C</button><button class="opt" data-v="B">B</button></span></div>
+      <div class="pic-row" data-answer="D"><span class="pic">🐶</span><span class="ru">собака</span><span class="opts"><button class="opt" data-v="D">D</button><button class="opt" data-v="G">G</button></span></div>
+      <div class="pic-row" data-answer="A"><span class="pic">🍎</span><span class="ru">яблоко</span><span class="opts"><button class="opt" data-v="A">A</button><button class="opt" data-v="E">E</button></span></div>
+      <div class="pic-row" data-answer="F"><span class="pic">🇷🇺</span><span class="ru">российский флаг</span><span class="opts"><button class="opt" data-v="F">F</button><button class="opt" data-v="P">P</button></span></div>
+    </div>
+  </section>
+
+  <!-- СЕКРЕТНЫЙ КОД -->
+  <div class="code-panel">
+    <div class="title">🔐 СЕКРЕТНЫЙ КОД</div>
+    <div class="code-slots">
+      <span class="code-slot" data-i="0">?</span>
+      <span class="code-slot" data-i="1">?</span>
+      <span class="code-slot" data-i="2">?</span>
+      <span class="code-slot" data-i="3">?</span>
+      <span class="code-slot" data-i="4">?</span>
+      <span class="code-slot" data-i="5">?</span>
+    </div>
+    <div style="font-size:14px;color:#5b83b5;margin-top:10px;">Каждое выполненное задание открывает часть кода</div>
+  </div>
+
+  <footer>Тренажёр по картинке «Игровая контрольная — Секретный код» • Английский язык, 2 класс</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="big">🔓🎉</div>
+    <h3>СЕКРЕТНЫЙ КОД РАСКРЫТ!</h3>
+    <div class="code">SECRET</div>
+    <p id="modalText">Молодец! Ты выполнил все три задания и открыл сейф. 🌟</p>
+    <button class="btn green" id="againBtn">Играть ещё раз</button>
+    <button class="btn" id="closeBtn" style="margin-left:8px;">Закрыть</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================
+     НАСТРОЙКА ПЕРЕДАЧИ РЕЗУЛЬТАТОВ В GOOGLE ТАБЛИЦУ
+     Вставьте сюда адрес вашего веб-приложения Apps Script
+     (Файл -> Развернуть -> Новое развертывание -> Веб-приложение)
+     вида: https://script.google.com/macros/s/AKfycb.../exec
+     Оставьте пустым "" — кнопка отправки будет отключена.
+     ============================================================ */
+  var GOOGLE_SHEET_URL = "";
+
+  var state = {t1:false, t2:false, t3:false};
+  var soundOn = true;
+  var audioCtx = null;
+  var startTime = Date.now();
+  var errors = 0;
+
+  /* ---------- ЗВУК ---------- */
+  function ac(){
+    if(!audioCtx){
+      try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; }
+    }
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+  function tone(freq, delay, dur, vol){
+    var c = ac(); if(!c) return;
+    var o = c.createOscillator(), g = c.createGain();
+    o.type = 'triangle'; o.frequency.value = freq;
+    var t = c.currentTime + delay;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol||0.18, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(c.destination);
+    o.start(t); o.stop(t + dur + 0.05);
+  }
+  function play(kind){
+    if(!soundOn) return;
+    if(kind === 'ok'){ tone(660,0,0.12); tone(880,0.12,0.18); }
+    else if(kind === 'bad'){ tone(220,0,0.18,0.14); tone(165,0.12,0.2,0.12); }
+    else if(kind === 'pick'){ tone(520,0,0.07,0.12); }
+    else if(kind === 'win'){
+      [523,659,784,1047,784,1047].forEach(function(f,i){ tone(f, i*0.16, 0.24, 0.2); });
+    }
+  }
+  function speak(text){
+    if(!soundOn || !('speechSynthesis' in window)) return;
+    try{
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = 'en-US'; u.rate = 0.8;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    }catch(e){}
+  }
+
+  /* ---------- ТОСТ ---------- */
+  var toastEl = document.getElementById('toast'), toastTimer = null;
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 1800);
+  }
+
+  /* ---------- СЕКРЕТНЫЙ КОД ---------- */
+  var CODE = ['S','E','C','R','E','T'];
+  function fillSlot(i){
+    var el = document.querySelector('.code-slot[data-i="'+i+'"]');
+    if(el && !el.classList.contains('filled')){
+      el.textContent = CODE[i];
+      el.classList.add('filled');
+    }
+  }
+
+  /* ---------- ЗАВЕРШЕНИЕ ЗАДАНИЙ ---------- */
+  function complete(id){
+    if(state[id]) return;
+    state[id] = true;
+    document.getElementById('task' + id.slice(1)).classList.add('done');
+    document.getElementById('star' + id.slice(1)).classList.add('on');
+    fillSlot(id === 't1' ? 0 : id === 't2' ? 1 : 2);
+    play('ok');
+    toast('Задание выполнено! ⭐');
+    checkAll();
+  }
+  function uncomplete(id){
+    if(!state[id]) return;
+    state[id] = false;
+    document.getElementById('task' + id.slice(1)).classList.remove('done');
+    document.getElementById('star' + id.slice(1)).classList.remove('on');
+    var el = document.querySelector('.code-slot[data-i="'+(id === 't1' ? 0 : id === 't2' ? 1 : 2)+'"]');
+    if(el){ el.classList.remove('filled'); el.textContent = '?'; }
+  }
+  function checkAll(){
+    if(state.t1 && state.t2 && state.t3) win();
+  }
+
+  /* ---------- ЗАДАНИЕ 1: ПАРЫ ---------- */
+  var matchArea = document.getElementById('matchArea');
+  var svg = document.getElementById('lines');
+  var selected = null;
+  var pairs = [];
+
+  function drawLines(){
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    var box = matchArea.getBoundingClientRect();
+    pairs.forEach(function(p){
+      var a = p[0].getBoundingClientRect(), b = p[1].getBoundingClientRect();
+      var x1 = a.right - box.left, y1 = a.top + a.height/2 - box.top;
+      var x2 = b.left - box.left,  y2 = b.top + b.height/2 - box.top;
+      var line = document.createElementNS('http://www.w3.org/2000/svg','path');
+      var mx = (x1 + x2) / 2;
+      line.setAttribute('d', 'M'+x1+','+y1+' C'+mx+','+y1+' '+mx+','+y2+' '+x2+','+y2);
+      line.setAttribute('stroke', '#2fa84f');
+      line.setAttribute('stroke-width', '5');
+      line.setAttribute('stroke-linecap', 'round');
+      line.setAttribute('fill', 'none');
+      line.setAttribute('opacity', '0.9');
+      svg.appendChild(line);
+    });
+  }
+
+  document.querySelectorAll('#colLeft .letter').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      if(btn.classList.contains('right')) return;
+      document.querySelectorAll('#colLeft .letter').forEach(function(b){ b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      selected = btn;
+      play('pick');
+      speak(btn.dataset.up);
+    });
+  });
+
+  document.querySelectorAll('#colRight .letter').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      if(btn.classList.contains('right')) return;
+      if(!selected){ toast('Сначала выбери букву слева 👈'); return; }
+      if(selected.dataset.up.toLowerCase() === btn.dataset.low){
+        selected.classList.remove('selected');
+        selected.classList.add('right');
+        btn.classList.add('right');
+        pairs.push([selected, btn]);
+        selected = null;
+        drawLines();
+        play('ok');
+        speak(btn.dataset.low);
+        if(pairs.length === 5) complete('t1');
+      }else{
+        btn.classList.remove('wrong');
+        void btn.offsetWidth;
+        btn.classList.add('wrong');
+        play('bad');
+        errors++;
+        setTimeout(function(){ btn.classList.remove('wrong'); }, 500);
+        if(pairs.length < 5) uncomplete('t1');
+      }
+    });
+  });
+  window.addEventListener('resize', drawLines);
+
+  /* ---------- ЗАДАНИЕ 2: БУКВЫ ---------- */
+  var slots = Array.prototype.slice.call(document.querySelectorAll('.slot'));
+  slots.forEach(function(inp){
+    inp.addEventListener('input', function(){
+      var v = inp.value.replace(/[^a-zA-Zа-яА-ЯёЁ]/g,'');
+      v = v.toUpperCase().slice(-1);
+      inp.value = v;
+      inp.classList.remove('bad');
+      if(!v){ inp.classList.remove('ok'); }
+      else if(v === inp.dataset.answer){
+        if(!inp.classList.contains('ok')){ play('ok'); speak(v); }
+        inp.classList.add('ok');
+      }else{
+        if(!inp.classList.contains('bad')) errors++;
+        inp.classList.remove('ok');
+        inp.classList.add('bad');
+      }
+      checkTask2();
+    });
+    inp.addEventListener('blur', function(){ setTimeout(checkTask2, 50); });
+    inp.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){
+        var i = slots.indexOf(inp);
+        if(i < slots.length - 1) slots[i+1].focus();
+      }
+    });
+  });
+  function checkTask2(){
+    var all = slots.every(function(s){ return s.value.toUpperCase() === s.dataset.answer; });
+    if(all) complete('t2'); else uncomplete('t2');
+  }
+
+  /* ---------- ЗАДАНИЕ 3: ДЕТЕКТИВ ---------- */
+  document.querySelectorAll('.pic-row').forEach(function(row){
+    row.querySelectorAll('.opt').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        if(row.classList.contains('solved')) return;
+        if(btn.dataset.v === row.dataset.answer){
+          row.querySelectorAll('.opt').forEach(function(b){ b.classList.remove('wrong'); });
+          btn.classList.add('right');
+          row.classList.add('solved');
+          play('ok');
+          speak(btn.dataset.v);
+          checkTask3();
+        }else{
+          btn.classList.remove('wrong');
+          void btn.offsetWidth;
+          btn.classList.add('wrong');
+          play('bad');
+          if(!btn.classList.contains('right')) errors++;
+          row.classList.remove('solved');
+          checkTask3();
+        }
+      });
+    });
+  });
+  function checkTask3(){
+    var rows = Array.prototype.slice.call(document.querySelectorAll('.pic-row'));
+    var all = rows.every(function(r){ return r.classList.contains('solved'); });
+    if(all) complete('t3'); else uncomplete('t3');
+  }
+
+  /* ---------- ОТПРАВКА РЕЗУЛЬТАТА В GOOGLE ТАБЛИЦУ ---------- */
+  var sendBtn = document.getElementById('sendBtn');
+  if(!GOOGLE_SHEET_URL){
+    sendBtn.style.display = 'none';
+  }
+
+  function collectResult(){
+    var done = (state.t1?1:0) + (state.t2?1:0) + (state.t3?1:0);
+    return {
+      name: document.getElementById('studentName').value.trim() || 'без имени',
+      klass: document.getElementById('studentClass').value.trim() || '—',
+      task1: state.t1 ? 'выполнено' : 'не выполнено',
+      task2: state.t2 ? 'выполнено' : 'не выполнено',
+      task3: state.t3 ? 'выполнено' : 'не выполнено',
+      score: done,
+      maxScore: 3,
+      errors: errors,
+      timeSec: Math.round((Date.now() - startTime) / 1000),
+      code: done === 3 ? 'SECRET' : 'не открыт',
+      date: new Date().toLocaleString('ru-RU')
+    };
+  }
+
+  function sendResult(auto){
+    if(!GOOGLE_SHEET_URL) return Promise.resolve(false);
+    var data = collectResult();
+    if(!auto && data.score === 0){
+      toast('Сначала реши хотя бы одно задание 🙂');
+      return Promise.resolve(false);
+    }
+    sendBtn.classList.add('sending');
+    toast('Отправляем результат... 📩');
+    return fetch(GOOGLE_SHEET_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type': 'text/plain;charset=utf-8'},
+      body: JSON.stringify(data)
+    }).then(function(){
+      sendBtn.classList.remove('sending');
+      sendBtn.classList.add('done');
+      sendBtn.textContent = '✔ Результат отправлен';
+      toast('Результат отправлен в Google Таблицу! 📊');
+      return true;
+    }).catch(function(){
+      sendBtn.classList.remove('sending');
+      toast('Не удалось отправить. Проверьте интернет 📵');
+      return false;
+    });
+  }
+
+  sendBtn.addEventListener('click', function(){ sendResult(false); });
+
+  /* ---------- ПОБЕДА ---------- */
+  var overlay = document.getElementById('overlay');
+  function win(){
+    fillSlot(3); fillSlot(4); fillSlot(5);
+    play('win');
+    confetti();
+    setTimeout(function(){
+      var name = document.getElementById('studentName').value.trim();
+      document.getElementById('modalText').textContent =
+        (name ? name + ', молодец! ' : 'Молодец! ') +
+        'Ты выполнил все три задания и открыл сейф. 🌟';
+      overlay.classList.add('show');
+      if(GOOGLE_SHEET_URL) sendResult(true);
+    }, 700);
+  }
+  function confetti(){
+    var colors = ['#f39c12','#1f6fd0','#2fa84f','#e74c3c','#f1c40f','#9b59b6'];
+    for(var i=0;i<70;i++){
+      var d = document.createElement('div');
+      d.className = 'confetti';
+      d.style.left = (Math.random()*100) + 'vw';
+      d.style.background = colors[Math.floor(Math.random()*colors.length)];
+      d.style.animationDuration = (2.2 + Math.random()*1.8) + 's';
+      d.style.animationDelay = (Math.random()*0.7) + 's';
+      d.style.width = (7 + Math.random()*7) + 'px';
+      d.style.height = (12 + Math.random()*8) + 'px';
+      document.body.appendChild(d);
+      (function(el){ setTimeout(function(){ el.remove(); }, 5200); })(d);
+    }
+  }
+
+  /* ---------- КНОПКИ ---------- */
+  document.getElementById('closeBtn').addEventListener('click', function(){ overlay.classList.remove('show'); });
+  document.getElementById('againBtn').addEventListener('click', function(){ overlay.classList.remove('show'); reset(); });
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) overlay.classList.remove('show'); });
+
+  document.getElementById('soundBtn').addEventListener('click', function(){
+    soundOn = !soundOn;
+    this.textContent = soundOn ? '🔊 Звук: вкл' : '🔇 Звук: выкл';
+    if(soundOn) play('pick');
+    if(!soundOn && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+  });
+
+  document.getElementById('checkBtn').addEventListener('click', function(){
+    var n = (state.t1?1:0) + (state.t2?1:0) + (state.t3?1:0);
+    if(n === 3){ toast('Все задания выполнены! 🔓'); win(); }
+    else{
+      toast('Верных заданий: ' + n + ' из 3. Продолжай! 💪');
+      play(n > 0 ? 'pick' : 'bad');
+      var first = ['t1','t2','t3'].filter(function(k){ return !state[k]; })[0];
+      document.getElementById('task' + first.slice(1)).scrollIntoView({behavior:'smooth', block:'center'});
+    }
+  });
+
+  function reset(){
+    state = {t1:false, t2:false, t3:false};
+    ['1','2','3'].forEach(function(n){
+      document.getElementById('task'+n).classList.remove('done');
+      document.getElementById('star'+n).classList.remove('on');
+    });
+    document.querySelectorAll('.code-slot').forEach(function(el){
+      el.classList.remove('filled'); el.textContent = '?';
+    });
+    selected = null; pairs = [];
+    document.querySelectorAll('.letter').forEach(function(b){
+      b.classList.remove('selected','right','wrong');
+    });
+    drawLines();
+    slots.forEach(function(s){ s.value=''; s.classList.remove('ok','bad'); });
+    document.querySelectorAll('.pic-row').forEach(function(r){
+      r.classList.remove('solved');
+      r.querySelectorAll('.opt').forEach(function(b){ b.classList.remove('right','wrong'); });
+    });
+    toast('Начинаем заново! 🚀');
+    errors = 0;
+    startTime = Date.now();
+    sendBtn.classList.remove('sending','done');
+    sendBtn.textContent = '📩 Отправить результат';
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  document.getElementById('resetBtn').addEventListener('click', reset);
+})();
+</script>
+</body>
+</html>
